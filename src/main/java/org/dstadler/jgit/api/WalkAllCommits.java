@@ -17,13 +17,22 @@ package org.dstadler.jgit.api;
  */
 
 import org.dstadler.jgit.helper.CookbookHelper;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.RenameDetector;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -48,10 +57,44 @@ public class WalkAllCommits {
                 int count = 0;
                 for( RevCommit commit : revWalk ) {
                     System.out.println("Commit: " + commit);
+                    // get commit author
+                    System.out.println("Author.Name: " + commit.getAuthorIdent().getName());
+                    System.out.println("Author.Email: " + commit.getAuthorIdent().getEmailAddress());
+                    //get file-paths
+                    List<String> paths = readElementsAt(repository, commit);
+                    System.out.println("Files of the author: " + paths);
+
                     count++;
                 }
+
+
+
                 System.out.println("Had " + count + " commits");
             }
         }
+    }
+
+    //From ListFilesOfCommit.java
+    // TODO: To calculate renamed files use RenameDetector
+    public static List<String> readElementsAt(Repository repository, RevCommit commit) throws IOException {
+        // and using commit's tree find the path
+        RevTree tree = commit.getTree();
+        //System.out.println("Having tree: " + tree);
+
+        List<String> items = new ArrayList<>();
+
+        // now try to find a specific file
+        try (TreeWalk treeWalk = new TreeWalk(repository)) {
+            treeWalk.addTree(tree);
+            treeWalk.setRecursive(true);
+            //treeWalk.setPostOrderTraversal(false);
+
+            while(treeWalk.next()) {
+                items.add(treeWalk.getPathString());
+            }
+
+        }
+
+        return items;
     }
 }
