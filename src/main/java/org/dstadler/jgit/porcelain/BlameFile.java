@@ -36,7 +36,7 @@ public class BlameFile {
 				for (int i = 0; i < rawText.size(); i++) {
 					final PersonIdent sourceAuthor = result.getSourceAuthor(i);
 					final RevCommit sourceCommit = result.getSourceCommit(i);
-					System.out.println(sourceAuthor.getName() +
+					System.out.println(sourceAuthor.getEmailAddress() +
 							(sourceCommit != null ? " - " + DATE_FORMAT.format(((long)sourceCommit.getCommitTime())*1000) +
 									" - " + sourceCommit.getName() : "") +
 							": " + rawText.getString(i));

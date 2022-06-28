@@ -17,13 +17,14 @@ package org.dstadler.jgit.api;
  */
 
 import org.dstadler.jgit.helper.CookbookHelper;
+import org.dstadler.jgit.models.Commit;
+import org.dstadler.jgit.models.Repository;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
-
+import java.util.stream.Stream;
 
 
 /**
@@ -31,8 +32,15 @@ import java.io.IOException;
  */
 public class WalkRev {
 
-    public static void main(String[] args) throws IOException {
-        try (Repository repository = CookbookHelper.openJGitCookbookRepository()) {
+    public static void main(String[] args) throws Exception {
+
+        Repository repository = new Repository("https://github.com/centic9/jgit-cookbook.git");
+
+        Stream<Commit> commitStream = repository.TraverseCommits();
+        commitStream.map(commit -> commit.Author())
+                .forEach(System.out::println);
+        commitStream.close();
+        /*try (Repository repository = CookbookHelper.openJGitCookbookRepository()) {
             Ref head = repository.exactRef("refs/heads/master");
 
             // a RevWalk allows to walk over commits based on some filtering that is defined
@@ -51,6 +59,6 @@ public class WalkRev {
 
                 walk.dispose();
             }
-        }
+        }*/
     }
 }

@@ -64,6 +64,8 @@ public class WalkAllCommits {
                     List<String> paths = readElementsAt(repository, commit);
                     System.out.println("Files of the author: " + paths);
 
+
+
                     count++;
                 }
 
